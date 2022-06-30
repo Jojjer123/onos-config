@@ -3,7 +3,8 @@ export GO111MODULE=on
 
 .PHONY: build
 
-ONOS_CONFIG_VERSION ?= latest
+# ONOS_CONFIG_VERSION ?= latest
+ONOS_CONFIG_VERSION ?= v0.10.10
 
 build-tools:=$(shell if [ ! -d "./build/build-tools" ]; then cd build && git clone https://github.com/onosproject/build-tools.git; fi)
 include ./build/build-tools/make/onf-common.mk
