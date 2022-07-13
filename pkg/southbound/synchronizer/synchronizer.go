@@ -18,11 +18,12 @@ package synchronizer
 import (
 	"context"
 	"fmt"
-	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
-	configmodel "github.com/onosproject/onos-config-model/pkg/model"
 	"regexp"
 	"strings"
 	syncPrimitives "sync"
+
+	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
+	configmodel "github.com/onosproject/onos-config-model/pkg/model"
 
 	"github.com/golang/protobuf/proto"
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
@@ -425,6 +426,11 @@ func (sync *Synchronizer) getOpStatePathsByType(ctx context.Context,
 	requestState := &gnmi.GetRequest{
 		Type:     reqtype,
 		Encoding: sync.encoding,
+		Path: []*gnmi.Path{
+			{
+				Target: sync.Target,
+			},
+		},
 	}
 
 	responseState, err := sync.target.Get(ctx, requestState)
