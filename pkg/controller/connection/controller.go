@@ -103,23 +103,23 @@ func (r *Reconciler) reconcileConnection(ctx context.Context, targetID topoapi.I
 		return true, nil
 	}
 
-	if target.GetEntity().KindID == "netconf-device" {
-		// Opens a new connection to the target
-		conn, err := r.conns.Connect(ctx, target)
-		if err != nil {
-			if !errors.IsAlreadyExists(err) {
-				log.Warnf("Failed to open connection for target \"%s\", %v", targetID, err)
-				return false, err
-			}
-			return false, nil
-		}
+	// if target.GetEntity().KindID == "netconf-device" {
+	// 	// Opens a new connection to the target
+	// 	conn, err := r.conns.Connect(ctx, target)
+	// 	if err != nil {
+	// 		if !errors.IsAlreadyExists(err) {
+	// 			log.Warnf("Failed to open connection for target \"%s\", %v", targetID, err)
+	// 			return false, err
+	// 		}
+	// 		return false, nil
+	// 	}
 
-		log.Infof("Connection %s for target %s is established successfully", targetID, conn.ID())
+	// 	log.Infof("Connection %s for target %s is established successfully", targetID, conn.ID())
 
-		// log.Infof("Target %v, is going to use a NETCONF adapter", target.UUID)
+	// 	// log.Infof("Target %v, is going to use a NETCONF adapter", target.UUID)
 
-		return true, nil
-	}
+	// 	return true, nil
+	// }
 
 	// Opens a new connection to the target
 	conn, err := r.conns.Connect(ctx, target)

@@ -85,9 +85,9 @@ func (m *connManager) connect(ctx context.Context, target *topoapi.Object) (Conn
 	// Check if device uses an adapter. If it does, set up a client to adapter (if there aren't one already).
 	// Currently "netconf-device" is static, but should be more dynamic (it requires a lot more changes which
 	// also could include changes in topo, most likely).
-	if typeKindID == "netconf-device" {
+	// if typeKindID == "netconf-device" {
 
-	}
+	// }
 	// 	// TODO: Check if adapter connection already exists, if so, don't create a new one.
 	// 	if _, ok := m.conns[target.ID]; ok {
 	// 		log.Infof("Conn already exists")
