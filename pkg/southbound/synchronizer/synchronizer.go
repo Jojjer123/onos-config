@@ -428,9 +428,10 @@ func (sync *Synchronizer) getOpStatePathsByType(ctx context.Context,
 		Encoding: sync.encoding,
 	}
 
-	log.Infof("Kind ID: %v", sync.Device.Object.GetEntity().GetKindID())
-	// log.Infof("Sending req to device with type: %v", sync.Device.Type)
-	requestState.Path = []*gnmi.Path{{Target: sync.Target}}
+	if sync.Device.Object.GetEntity().GetKindID() == "netconf-device" {
+		log.Infof("Adding target to path for device using gnmi-netconf-adapter.")
+		requestState.Path = []*gnmi.Path{{Target: sync.Target}}
+	}
 
 	responseState, err := sync.target.Get(ctx, requestState)
 	if err != nil {
