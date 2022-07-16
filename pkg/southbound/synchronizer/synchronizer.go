@@ -428,7 +428,8 @@ func (sync *Synchronizer) getOpStatePathsByType(ctx context.Context,
 		Encoding: sync.encoding,
 	}
 
-	log.Infof("Sending req to device with type: %v", sync.Device.Type)
+	log.Infof("Sync: %v", *sync)
+	// log.Infof("Sending req to device with type: %v", sync.Device.Type)
 	requestState.Path = []*gnmi.Path{{Target: sync.Target}}
 
 	responseState, err := sync.target.Get(ctx, requestState)
