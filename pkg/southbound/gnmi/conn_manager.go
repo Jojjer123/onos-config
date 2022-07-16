@@ -17,7 +17,6 @@ package gnmi
 import (
 	"context"
 	"math"
-	"strings"
 	"sync"
 
 	"google.golang.org/grpc"
@@ -83,16 +82,23 @@ func (m *connManager) connect(ctx context.Context, target *topoapi.Object) (Conn
 		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(math.MaxInt32)),
 	}
 
-	// TODO: Add support for multiple adapters in order to have failover.
-	// Check if device uses an adapter. If it does, set up client to adapter
-	// instead (if there aren't one already).
+	// Check if device uses an adapter. If it does, set up a client to adapter (if there aren't one already).
+	// Currently "netconf-device" is static, but should be more dynamic (it requires a lot more changes which
+	// also could include changes in topo, most likely).
 	if typeKindID == "netconf-device" {
-		// TODO: Check if adapter connection already exists, if so, don't create a new one.
-		adapterName := strings.Split(destination.Addrs[0], ":")[0]
-		log.Infof("Adding a gNMI connection %s to adapter \"%s\", for target \"%s\"", adapterName, destination.Target)
 
-		// TODO: create conn object and do whatever the normal case is doing for this connection.
 	}
+	// 	// TODO: Check if adapter connection already exists, if so, don't create a new one.
+	// 	if _, ok := m.conns[target.ID]; ok {
+	// 		log.Infof("Conn already exists")
+	// 	} else {
+	// 	}
+
+	// 	adapterName := strings.Split(destination.Addrs[0], ":")[0]
+	// 	log.Infof("Adding a gNMI connection %s to adapter \"%s\", for target \"%s\"", adapterName, destination.Target)
+
+	// 	// TODO: create conn object and do whatever the normal case is doing for this connection.
+	// }
 
 	gnmiClient, clientConn, err := newGNMIClient(ctx, *destination, opts)
 	if err != nil {

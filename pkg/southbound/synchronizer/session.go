@@ -16,10 +16,11 @@ package synchronizer
 
 import (
 	"context"
-	configmodel "github.com/onosproject/onos-config-model/pkg/model"
-	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"sync"
 	"time"
+
+	configmodel "github.com/onosproject/onos-config-model/pkg/model"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 
 	"github.com/cenkalti/backoff"
 
@@ -142,6 +143,7 @@ func (s *Session) synchronize() error {
 
 	s.mu.RLock()
 	modelName := utils.ToModelName(devicetype.Type(s.device.Type), devicetype.Version(s.device.Version))
+	log.Infof("Getting plugin for model: %v", modelName)
 	plugin, err := s.modelRegistry.GetPlugin(modelName)
 	if err != nil {
 		if errors.IsNotFound(err) {
