@@ -394,6 +394,9 @@ func extractModelForTarget(target devicetype.ID,
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+	log.Infof("Pluging: %v", *plugin)
+
 	return plugin.ReadWritePaths, nil
 }
 
