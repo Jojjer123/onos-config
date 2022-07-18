@@ -17,10 +17,11 @@ package gnmi
 import (
 	"context"
 	"fmt"
-	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
-	nbutils "github.com/onosproject/onos-config/pkg/northbound/utils"
 	"strings"
 	"time"
+
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	nbutils "github.com/onosproject/onos-config/pkg/northbound/utils"
 
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	networkchange "github.com/onosproject/onos-api/go/onos/config/change/network"
@@ -398,6 +399,9 @@ func extractModelForTarget(target devicetype.ID,
 
 func findPathFromModel(path string, rwPaths modelregistry.ReadWritePathMap, exact bool) (bool, *modelregistry.ReadWritePathElem, error) {
 	searchpathNoIndices := modelregistry.RemovePathIndices(path)
+
+	log.Infof("rwPaths: %v", rwPaths)
+	log.Infof("anonymized path: %v", modelregistry.AnonymizePathIndices(path))
 
 	// try exact match first
 	if rwPath, isExactMatch := rwPaths[modelregistry.AnonymizePathIndices(path)]; isExactMatch {

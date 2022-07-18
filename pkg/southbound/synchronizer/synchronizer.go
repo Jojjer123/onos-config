@@ -428,6 +428,7 @@ func (sync *Synchronizer) getOpStatePathsByType(ctx context.Context,
 		Encoding: sync.encoding,
 	}
 
+	// If kind is "netconf-device" add target to path
 	if sync.Device.Object.GetEntity().GetKindID() == "netconf-device" {
 		log.Infof("Adding target to path for device using gnmi-netconf-adapter.")
 		requestState.Path = []*gnmi.Path{{Target: sync.Target}}
