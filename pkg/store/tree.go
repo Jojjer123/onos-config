@@ -17,10 +17,13 @@ package store
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
+
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	"github.com/onosproject/onos-config/pkg/utils"
-	"reflect"
-	"strings"
 )
 
 const (
@@ -36,15 +39,36 @@ const (
 // string - therefore all float value must be string in JSON
 // Same with int64 and uin64 as per RFC 7951
 func BuildTree(values []*devicechange.PathValue, jsonRFC7951 bool) ([]byte, error) {
+	fmt.Println("Building tree now...")
+	namespaceMatch, err := regexp.Compile(`\[namespace\=[a-zA-Z0-9\:\-\.]*\]`)
+	if err != nil {
+		fmt.Printf("Can't compile regex for matching and removing namespaces: %v\n", err)
+		return nil, err
+	}
 
 	root := make(map[string]interface{})
 	rootif := interface{}(root)
 	for _, cv := range values {
-		err := addPathToTree(cv.Path, cv.GetValue(), &rootif, jsonRFC7951)
+		path := cv.Path
+		// fmt.Printf("Path looks like: %v\n", path)
+
+		if strings.Contains(path, "namespace") {
+			fmt.Println("namespace(s) in configValues will be removed")
+
+			path = namespaceMatch.ReplaceAllString(path, "")
+		}
+
+		fmt.Printf("Updated path after removing namespace(s): %s\n", path)
+		fmt.Printf("Value is: %v\n", cv.GetValue())
+
+		// fmt.Printf("PathValue at: %v, has value: %v\n", cv.Path, cv.Value)
+		err := addPathToTree(path, cv.GetValue(), &rootif, jsonRFC7951)
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	// fmt.Printf("tree root looks like: %v\n", root)
 
 	buf, err := json.MarshalIndent(root, "", "  ")
 	if err != nil {
@@ -72,6 +96,7 @@ func addPathToTree(path string, value *devicechange.TypedValue, nodeif *interfac
 		handleLeafValue(nodemap, value, pathelems, jsonRFC7951)
 
 	} else if strings.Contains(pathelems[0], equals) {
+		fmt.Printf("PathElem %v contains equals\n", pathelems[0])
 		// To handle list index items
 		refinePath := strings.Join(pathelems[1:], slash)
 		if refinePath == "" {
@@ -92,11 +117,19 @@ func addPathToTree(path string, value *devicechange.TypedValue, nodeif *interfac
 
 			keyName := keyString[brktIdx+1 : eqIdx]
 			keyVal := keyString[eqIdx+1 : brktIdx2]
-			keyMap[keyName] = keyVal
+
+			newKeyVal, err := strconv.ParseInt(keyVal, 10, 32)
+			if err != nil {
+				keyMap[keyName] = keyVal
+			} else {
+				keyMap[keyName] = newKeyVal
+			}
 
 			// position to look at next potential key string
 			keyString = keyString[brktIdx2+1:]
 		}
+
+		fmt.Printf("KeyMap: %v\n", keyMap)
 
 		listSlice, ok := nodemap[listName]
 		if !ok {

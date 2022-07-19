@@ -17,15 +17,16 @@ package modelregistry
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"sort"
+	"strings"
+	"sync"
+
 	configmodel "github.com/onosproject/onos-config-model/pkg/model"
 	plugincache "github.com/onosproject/onos-config-model/pkg/model/plugin/cache"
 	pluginmodule "github.com/onosproject/onos-config-model/pkg/model/plugin/module"
 	modelregistry "github.com/onosproject/onos-config-model/pkg/model/registry"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
-	"regexp"
-	"sort"
-	"strings"
-	"sync"
 
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
@@ -47,7 +48,7 @@ type PathMap interface {
 const MatchOnIndex = `(\[.*?]).*?`
 
 // IndexAllowedChars - regexp to restrict characters in index names
-const IndexAllowedChars = `^([a-zA-Z0-9\*\-\._])+$`
+const IndexAllowedChars = `^([a-zA-Z0-9\*\-\._:])+$`
 
 // ReadOnlyAttrib is the known metadata about a Read Only leaf
 type ReadOnlyAttrib struct {

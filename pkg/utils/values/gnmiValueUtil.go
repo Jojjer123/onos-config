@@ -17,6 +17,8 @@ package values
 
 import (
 	"fmt"
+	"reflect"
+
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	"github.com/onosproject/onos-config/pkg/modelregistry"
 	gnmi "github.com/openconfig/gnmi/proto/gnmi"
@@ -24,6 +26,12 @@ import (
 
 // GnmiTypedValueToNativeType converts gnmi type based values in to native byte array devicechange
 func GnmiTypedValueToNativeType(gnmiTv *gnmi.TypedValue, modelPath *modelregistry.ReadWritePathElem) (*devicechange.TypedValue, error) {
+
+	fmt.Println("Inside GnmiTypedValueToNativeType...")
+
+	fmt.Printf("gnmi TypedValue: %v, modelPath: %v\n", gnmiTv, modelPath)
+
+	fmt.Printf("Value %v is of type %v\n", gnmiTv.GetValue(), reflect.TypeOf(gnmiTv.GetValue()))
 
 	switch v := gnmiTv.GetValue().(type) {
 	case *gnmi.TypedValue_StringVal:

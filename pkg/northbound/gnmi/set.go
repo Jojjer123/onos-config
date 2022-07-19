@@ -395,7 +395,7 @@ func extractModelForTarget(target devicetype.ID,
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	log.Infof("Pluging: %v", *plugin)
+	// log.Infof("Plugin: %v", *plugin)
 
 	return plugin.ReadWritePaths, nil
 }
@@ -403,11 +403,23 @@ func extractModelForTarget(target devicetype.ID,
 func findPathFromModel(path string, rwPaths modelregistry.ReadWritePathMap, exact bool) (bool, *modelregistry.ReadWritePathElem, error) {
 	searchpathNoIndices := modelregistry.RemovePathIndices(path)
 
-	log.Infof("rwPaths: %v", rwPaths)
-	log.Infof("anonymized path: %v", modelregistry.AnonymizePathIndices(path))
+	anonymousPath := modelregistry.AnonymizePathIndices(path)
+
+	if strings.Contains(anonymousPath, "namespace") {
+		log.Infof("Path \"%s\" contains namespace(s), it will be removed (ONLY) for validation", path)
+		anonymousPath = strings.ReplaceAll(anonymousPath, "[namespace=*]", "")
+	}
+
+	log.Infof("AnonymousPath: %s", anonymousPath)
+
+	// log.Infof("Validate /interfaces/interface[name=*]/max-sdu-table[traffic-class=*]/queue-max-sdu:\t\t %v", rwPaths["/interfaces/interface[name=*]/max-sdu-table[traffic-class=*]/queue-max-sdu"])
+	// log.Infof("Path: %s", path)
+	// log.Infof("rwPaths: %v", rwPaths[modelregistry.AnonymizePathIndices()])
+	// log.Infof("anonymized path: %v", modelregistry.AnonymizePathIndices(path))
+	// log.Infof("rwPaths: %v", rwPaths)
 
 	// try exact match first
-	if rwPath, isExactMatch := rwPaths[modelregistry.AnonymizePathIndices(path)]; isExactMatch {
+	if rwPath, isExactMatch := rwPaths[anonymousPath]; isExactMatch {
 		return true, &rwPath, nil
 	} else if exact {
 		return false, nil,
@@ -439,6 +451,7 @@ func findPathFromModel(path string, rwPaths modelregistry.ReadWritePathMap, exac
 
 // Check that if this is a Key attribute, that the value is the same as its parent's key
 func checkKeyValue(path string, rwPath *modelregistry.ReadWritePathElem, val *devicechange.TypedValue) error {
+	log.Info("Inside checkKeyValue...")
 	indexNames, indexValues := modelregistry.ExtractIndexNames(path)
 	if len(indexNames) == 0 {
 		return nil

@@ -17,6 +17,9 @@ package utils
 import (
 	"context"
 	"fmt"
+	"sort"
+	"strings"
+
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	networkchange "github.com/onosproject/onos-api/go/onos/config/change/network"
 	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
@@ -28,8 +31,6 @@ import (
 	"github.com/onosproject/onos-config/pkg/store/device/cache"
 	"github.com/onosproject/onos-config/pkg/utils"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
-	"sort"
-	"strings"
 )
 
 // SetConfigAlreadyApplied is a string constant for "Already applied:"
@@ -83,6 +84,7 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 	for _, configValue := range configValues {
 		pathValues[configValue.Path] = configValue.Value
 	}
+
 	// then overlay with updates
 	for changePath, changeValue := range updates {
 		if len(changeValue.GetBytes()) == 0 &&
@@ -129,7 +131,10 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 		return configValues[i].Path < configValues[j].Path
 	})
 
-	jsonTree, err := store.BuildTree(configValues, true)
+	log.Infof("config values before building jsonTree looks like: %v", configValues)
+
+	// jsonTree, err := store.BuildTree(configValues, true)
+	jsonTree, err := store.BuildTree(configValues, false)
 	if err != nil {
 		log.Error("Error building JSON tree from Config Values ", err, jsonTree)
 		return err
@@ -147,6 +152,12 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 
 	// TODO: deprecate the old plugin validation
 	ygotModel, err := deviceModelYgotPlugin.Model.Unmarshaler()(jsonTree)
+
+	// test := deviceModelYgotPlugin.Model.Unmarshaler()
+	// val, err := test([]byte("123"))
+	log.Infof("model marshaler: %v", deviceModelYgotPlugin.Model.Unmarshaler())
+	log.Errorf("error umarshaling jsonTree: %+v", err)
+
 	if err != nil {
 		log.Infof("Unmarshalling during validation failed. JSON tree %v", jsonTree)
 		return fmt.Errorf("unmarshaller error: %v", err)
