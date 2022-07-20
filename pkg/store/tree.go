@@ -39,7 +39,7 @@ const (
 // string - therefore all float value must be string in JSON
 // Same with int64 and uin64 as per RFC 7951
 func BuildTree(values []*devicechange.PathValue, jsonRFC7951 bool) ([]byte, error) {
-	fmt.Println("Building tree now...")
+	// fmt.Println("Building tree now...")
 	namespaceMatch, err := regexp.Compile(`\[namespace\=[a-zA-Z0-9\:\-\.]*\]`)
 	if err != nil {
 		fmt.Printf("Can't compile regex for matching and removing namespaces: %v\n", err)
@@ -53,13 +53,12 @@ func BuildTree(values []*devicechange.PathValue, jsonRFC7951 bool) ([]byte, erro
 		// fmt.Printf("Path looks like: %v\n", path)
 
 		if strings.Contains(path, "namespace") {
-			fmt.Println("namespace(s) in configValues will be removed")
-
+			// fmt.Println("namespace(s) in configValues will be removed")
 			path = namespaceMatch.ReplaceAllString(path, "")
 		}
 
-		fmt.Printf("Updated path after removing namespace(s): %s\n", path)
-		fmt.Printf("Value is: %v\n", cv.GetValue())
+		// fmt.Printf("Updated path after removing namespace(s): %s\n", path)
+		// fmt.Printf("Value is: %v\n", cv.GetValue())
 
 		// fmt.Printf("PathValue at: %v, has value: %v\n", cv.Path, cv.Value)
 		err := addPathToTree(path, cv.GetValue(), &rootif, jsonRFC7951)
@@ -96,7 +95,7 @@ func addPathToTree(path string, value *devicechange.TypedValue, nodeif *interfac
 		handleLeafValue(nodemap, value, pathelems, jsonRFC7951)
 
 	} else if strings.Contains(pathelems[0], equals) {
-		fmt.Printf("PathElem %v contains equals\n", pathelems[0])
+		// fmt.Printf("PathElem %v contains equals\n", pathelems[0])
 		// To handle list index items
 		refinePath := strings.Join(pathelems[1:], slash)
 		if refinePath == "" {
@@ -129,7 +128,7 @@ func addPathToTree(path string, value *devicechange.TypedValue, nodeif *interfac
 			keyString = keyString[brktIdx2+1:]
 		}
 
-		fmt.Printf("KeyMap: %v\n", keyMap)
+		// fmt.Printf("KeyMap: %v\n", keyMap)
 
 		listSlice, ok := nodemap[listName]
 		if !ok {

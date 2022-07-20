@@ -406,11 +406,11 @@ func findPathFromModel(path string, rwPaths modelregistry.ReadWritePathMap, exac
 	anonymousPath := modelregistry.AnonymizePathIndices(path)
 
 	if strings.Contains(anonymousPath, "namespace") {
-		log.Infof("Path \"%s\" contains namespace(s), it will be removed (ONLY) for validation", path)
+		log.Info("Path contains namespace(s), it will be removed (ONLY) for validation")
 		anonymousPath = strings.ReplaceAll(anonymousPath, "[namespace=*]", "")
 	}
 
-	log.Infof("AnonymousPath: %s", anonymousPath)
+	// log.Infof("AnonymousPath: %s", anonymousPath)
 
 	// log.Infof("Validate /interfaces/interface[name=*]/max-sdu-table[traffic-class=*]/queue-max-sdu:\t\t %v", rwPaths["/interfaces/interface[name=*]/max-sdu-table[traffic-class=*]/queue-max-sdu"])
 	// log.Infof("Path: %s", path)
@@ -451,7 +451,7 @@ func findPathFromModel(path string, rwPaths modelregistry.ReadWritePathMap, exac
 
 // Check that if this is a Key attribute, that the value is the same as its parent's key
 func checkKeyValue(path string, rwPath *modelregistry.ReadWritePathElem, val *devicechange.TypedValue) error {
-	log.Info("Inside checkKeyValue...")
+	// log.Info("Inside checkKeyValue...")
 	indexNames, indexValues := modelregistry.ExtractIndexNames(path)
 	if len(indexNames) == 0 {
 		return nil

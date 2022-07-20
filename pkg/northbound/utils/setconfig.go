@@ -131,7 +131,7 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 		return configValues[i].Path < configValues[j].Path
 	})
 
-	log.Infof("config values before building jsonTree looks like: %v", configValues)
+	// log.Infof("config values before building jsonTree looks like: %v", configValues)
 
 	// jsonTree, err := store.BuildTree(configValues, true)
 	jsonTree, err := store.BuildTree(configValues, false)
@@ -155,8 +155,8 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 
 	// test := deviceModelYgotPlugin.Model.Unmarshaler()
 	// val, err := test([]byte("123"))
-	log.Infof("model marshaler: %v", deviceModelYgotPlugin.Model.Unmarshaler())
-	log.Errorf("error umarshaling jsonTree: %+v", err)
+	// log.Infof("model marshaler: %v", deviceModelYgotPlugin.Model.Unmarshaler())
+	// log.Errorf("error umarshaling jsonTree: %+v", err)
 
 	if err != nil {
 		log.Infof("Unmarshalling during validation failed. JSON tree %v", jsonTree)
