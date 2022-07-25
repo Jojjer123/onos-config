@@ -84,6 +84,7 @@ func (s *Server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	//Update - extract targets and their models
 	for _, u := range req.GetUpdate() {
 		target := devicetype.ID(u.Path.GetTarget())
+		log.Infof("target: %v", target)
 		if target == "" { //Try the prefix
 			target = prefixTarget
 		}
