@@ -131,8 +131,6 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 		return configValues[i].Path < configValues[j].Path
 	})
 
-	// log.Infof("config values before building jsonTree looks like: %v", configValues)
-
 	// jsonTree, err := store.BuildTree(configValues, true)
 	jsonTree, err := store.BuildTree(configValues, false)
 	if err != nil {
@@ -152,11 +150,6 @@ func ValidateNetworkConfig(deviceName devicetype.ID, version devicetype.Version,
 
 	// TODO: deprecate the old plugin validation
 	ygotModel, err := deviceModelYgotPlugin.Model.Unmarshaler()(jsonTree)
-
-	// test := deviceModelYgotPlugin.Model.Unmarshaler()
-	// val, err := test([]byte("123"))
-	// log.Infof("model marshaler: %v", deviceModelYgotPlugin.Model.Unmarshaler())
-	// log.Errorf("error umarshaling jsonTree: %+v", err)
 
 	if err != nil {
 		log.Infof("Unmarshalling during validation failed. JSON tree %v", jsonTree)
@@ -187,6 +180,7 @@ func SetNetworkConfig(targetUpdates map[devicetype.ID]devicechange.TypedValueMap
 	if errNetChange != nil {
 		return nil, errNetChange
 	}
+
 	newNetworkConfig.WithUsername(username)
 	//Writing to the atomix backed store too
 	errStoreChange := networkChangesStore.Create(newNetworkConfig)
