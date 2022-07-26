@@ -17,11 +17,12 @@ package device
 import (
 	"context"
 	"fmt"
-	"github.com/atomix/atomix-go-framework/pkg/atomix/meta"
-	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"io"
 	"sync"
 	"time"
+
+	"github.com/atomix/atomix-go-framework/pkg/atomix/meta"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 
 	"github.com/atomix/atomix-go-client/pkg/atomix"
 	"github.com/atomix/atomix-go-client/pkg/atomix/indexedmap"
@@ -191,10 +192,18 @@ func (s *atomixStore) Create(change *devicechange.DeviceChange) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	entry, err := changes.Set(ctx, indexedmap.Index(change.Index), string(change.ID), bytes, indexedmap.IfNotSet())
+	// Replace previous changes.Set as the index of the network change will be used in that case.
+	// In changes.Append the index doesn't have to be specified and one is generated.
+	// This should not affect lookup of old device changes as lookup should be done by ID.
+	entry, err := changes.Append(ctx, string(change.ID), bytes)
 	if err != nil {
 		return errors.FromAtomix(err)
 	}
+
+	// entry, err := changes.Set(ctx, indexedmap.Index(change.Index), string(change.ID), bytes, indexedmap.IfNotSet())
+	// if err != nil {
+	// 	return errors.FromAtomix(err)
+	// }
 
 	change.Index = devicechange.Index(entry.Index)
 	change.Revision = devicechange.Revision(entry.Revision)
