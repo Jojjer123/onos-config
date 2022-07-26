@@ -16,6 +16,7 @@ package values
 
 import (
 	"fmt"
+
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	"github.com/onosproject/onos-config/pkg/utils"
 	"github.com/openconfig/gnmi/proto/gnmi"
@@ -42,7 +43,14 @@ func NativeChangeToGnmiChange(c *devicechange.Change) (*gnmi.SetRequest, error) 
 			if err != nil {
 				return nil, fmt.Errorf("error converting %s: %s", changeValue.Path, err)
 			}
+
 			updatePath := gnmi.Path{Elem: pathElemsRefs.Elem}
+
+			// fmt.Printf("Adding target if model is \"tsn-model\", model is: \"%v\"\n", c.DeviceType)
+			if c.DeviceType == "tsn-model" {
+				updatePath.Target = string(c.DeviceID)
+			}
+
 			updatedPaths = append(updatedPaths, &gnmi.Update{Path: &updatePath, Val: gnmiValue})
 		}
 	}
