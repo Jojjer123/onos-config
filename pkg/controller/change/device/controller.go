@@ -16,6 +16,8 @@ package device
 
 import (
 	"context"
+	"strings"
+
 	changetypes "github.com/onosproject/onos-api/go/onos/config/change"
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	"github.com/onosproject/onos-api/go/onos/topo"
@@ -32,7 +34,6 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"strings"
 )
 
 var log = logging.GetLogger("controller", "change", "device")
@@ -202,6 +203,9 @@ func (r *Reconciler) translateAndSendChange(change *devicechange.Change) (bool, 
 		return true, err
 	}
 	log.Debugf("Sending gNMI SetRequest %+v to Device %s:%s", setRequest, change.DeviceID, change.DeviceVersion)
+
+	// log.Infof("Sending gNMI SetRequest %+v to Device %s:%s", setRequest, change.DeviceID, change.DeviceVersion)
+
 	setResponse, err := deviceTarget.Set(*deviceTarget.Context(), setRequest)
 	if err != nil {
 		if err == context.Canceled || err == context.DeadlineExceeded {
